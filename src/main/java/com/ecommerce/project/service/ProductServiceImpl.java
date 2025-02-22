@@ -1,5 +1,6 @@
 package com.ecommerce.project.service;
 
+import com.ecommerce.project.exceptions.APIException;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Category;
 import com.ecommerce.project.model.Product;
@@ -39,6 +40,18 @@ public class ProductServiceImpl implements ProductService{
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
+        boolean isProductNotPresent = true;
+        List<Product> products = category.getProducts();
+        for (Product product : products) {
+            if (product.getProductName().equals(productDTO.getProductName())) {
+                isProductNotPresent = false;
+                break;
+            }
+        }
+
+        if (!isProductNotPresent)
+            throw new APIException("Product with the name: " + productDTO.getProductName() + " already exists!");
+
         Product product = modelMapper.map(productDTO, Product.class);
         product.setImage("default.png");
         product.setCategory(category);
@@ -50,6 +63,9 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public ProductResponse getAllProducts() {
         List<Product> products = productRepository.findAll();
+        if (products.isEmpty())
+            throw new APIException("No products to show!");
+
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
@@ -64,6 +80,9 @@ public class ProductServiceImpl implements ProductService{
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         List<Product> products = productRepository.findByCategoryOrderByPriceAsc(category);
+        if (products.isEmpty())
+            throw new APIException("No products to show!");
+
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
@@ -75,6 +94,9 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public ProductResponse searchProductByKeyword(String keyword) {
         List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
+        if (products.isEmpty())
+            throw new APIException("No products to show!");
+
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
