@@ -1,17 +1,18 @@
 import { FaExclamationTriangle } from "react-icons/fa";
 import ProductCard from "./ProductCard";
+import type { Product } from "../types/Product";
 
 const Products = () => {
     const isLoading = false;
     const errorMessage = "";
     
-    const products = [
+    const products: Product[] = [
         {
             productId: 652,
             productName: "Iphone Xs Max",
-            image: "https://plachold.co/600x400",
-            description: "Experience the latest in mobile technology with advanced features.",
-            quantity: 0,
+            image: "https://placehold.co/600x400",
+            description: "Experience the latest in mobile technology with advanced cameras, powerful processing, and all day battery.",
+            quantity: 10,
             price: 1450.0,
             discount: 10,
             specialPrice: 1305.0
@@ -19,8 +20,8 @@ const Products = () => {
         {
             productId: 654,
             productName: "MacBook Air M2s",
-            image: "https://plachold.co/600x400",
-            description: "Ultra-thin laptop with apple's M2 chip, providing a great experience.",
+            image: "https://placehold.co/600x400",
+            description: "Ultra-thin laptop with apple's M2 chip, providing fast performance in a lightweight, portable design.",
             quantity: 0,
             price: 2550.0,
             discount: 20,
@@ -40,7 +41,7 @@ const Products = () => {
         ) : (
             <div className="min-h-[700px]">
                 <div className="pb-6 pt-14 grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-y-6 gap-x-6">
-                    {products.map((product, index) => <ProductCard key={index} {...product}/>)}
+                    {products.map((product, index) => <ProductCard key={index} product={product}/>)}
                 </div>
             </div>
         )}
